@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qosmos"
+version = "27.0.0"
+description = "Plain-language simulations with a little AI help—docs, examples, and tests."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "Apache-2.0"}
+authors = [{name="Qosmos Team"}]
+dependencies = ["numpy", "scipy", "matplotlib", "networkx", "pydantic"]
+[project.optional-dependencies]
+dev = ["pytest", "pytest-cov", "ruff", "mypy", "types-setuptools"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+
+[tool.ruff]
+select = ["E","F","I"]
