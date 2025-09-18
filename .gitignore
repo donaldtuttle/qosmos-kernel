@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+.venv/
+.env
+dist/
+build/
+site/
+*.egg-info/
+
+# Project data
+knowledge/
+*.npz
+*.npz.zip
+
+# Notebooks & cache
+.ipynb_checkpoints/
+*.pytest_cache/
