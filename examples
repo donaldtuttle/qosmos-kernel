@@ -1,0 +1,55 @@
+# examples/minimal_run.py
+from qosmos.types import Psi, Context, Memory
+from qosmos.runtime import Runtime
+from qosmos.operators import ReflexiveProjection, SemanticGradient, XiUpdate, Collapse
+from qosmos.telemetry import psi_meta
+
+
+def main() -> None:
+    # Initial observer state ψ
+    psi = Psi(
+        id="ψᴽ-001",
+        data={"init": True},
+        coherence=0.80,
+        t=0,
+    )
+
+    # Execution context ctx
+    ctx = Context(
+        task="minimal_demo",
+        mode="audit",
+        limits={
+            "collapse_threshold": 0.75,
+        },
+    )
+
+    # Memory stack M (append-only traces + events)
+    mem = Memory()
+
+    # Runtime + operators
+    runtime = Runtime()
+
+    pi_w = ReflexiveProjection()          # Πᴽ
+    gamma = SemanticGradient()            # Γ
+    xi = XiUpdate(pi_w, gamma)            # Ξ
+    lam = Collapse()                      # Λψ
+
+    runtime.register(xi)
+    runtime.register(lam)
+
+    # Run a tiny sequence:
+    # 1) Ξ tick (must enforce Ξ(ψ) = ψᴽ ⊕ Γ(ψ) via typed Fusion artifact)
+    psi = runtime.step("Ξ", psi, ctx, mem)
+
+    # 2) optional collapse (threshold-gated)
+    psi = runtime.step("Λψ", psi, ctx, mem)
+
+    # Emit minimal Ψmeta-ish telemetry snapshot
+    print("Telemetry:", psi_meta(psi, mem))
+    print("Final ψ:", psi)
+    print("Last trace artifact:", mem.trace[-1] if mem.trace else None)
+    print("Events:", mem.events)
+
+
+if __name__ == "__main__":
+    main()
