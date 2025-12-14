@@ -1,36 +1,64 @@
 # qosmos/operators.py
 from __future__ import annotations
 
+from dataclasses import dataclass
+from typing import Protocol
+
 from .contracts import XI_FUSION_KEY, enforce_non_arithmetic_fusion, enforce_xi_invariant
 from .memory import Memory
 from .types import Context, Fusion, Gamma, Psi, PsiReflexive
 
 
+# -----------------------------------------------------------------------------
+# Protocols (keeps XiUpdate clean + enforces the "operator shape" consistently)
+# -----------------------------------------------------------------------------
+
+class Projector(Protocol):
+    name: str
+    def apply(self, psi: Psi, ctx: Context, mem: Memory) -> PsiReflexive: ...
+
+
+class GradientComputer(Protocol):
+    name: str
+    def apply(self, psi: Psi, ctx: Context, mem: Memory) -> Gamma: ...
+
+
+# -----------------------------------------------------------------------------
+# Πᴽ — Reflexive Projection
+# -----------------------------------------------------------------------------
+
+@dataclass
 class ReflexiveProjection:
     """
     Πᴽ : Ψ → Ψ  (implemented here as producing a typed ψᴽ artifact)
     """
-    name = "Πᴽ"
+    name: str = "Πᴽ"
 
-    def project(self, psi: Psi, ctx: Context, mem: Memory) -> PsiReflexive:
+    def apply(self, psi: Psi, ctx: Context, mem: Memory) -> PsiReflexive:
         # Minimal, auditable projection: snapshot/summary payload
         return PsiReflexive(
             source_id=psi.id,
             payload={
                 "t": psi.t,
                 "task": ctx.task,
+                "mode": ctx.mode,
                 "state": psi.data,
             },
         )
 
 
+# -----------------------------------------------------------------------------
+# Γ — Semantic Gradient
+# -----------------------------------------------------------------------------
+
+@dataclass
 class SemanticGradient:
     """
     Γ : Ψ × Ctx → Ψ  (implemented here as producing a typed Γ artifact)
     """
-    name = "Γ"
+    name: str = "Γ"
 
-    def compute(self, psi: Psi, ctx: Context, mem: Memory) -> Gamma:
+    def apply(self, psi: Psi, ctx: Context, mem: Memory) -> Gamma:
         # Minimal, auditable gradient stub:
         # - magnitude tied to coherence (ρ gate proxy)
         # - direction carries task tag (representation-agnostic)
@@ -38,25 +66,35 @@ class SemanticGradient:
             magnitude=float(psi.coherence),
             direction={
                 "task": ctx.task,
+                "mode": ctx.mode,
                 "note": "stub Γ(ψ) — replace with concrete Φ/ρ/∇Φ instantiation",
             },
         )
 
 
+# -----------------------------------------------------------------------------
+# Ξ — Recursive Update (contract-enforced)
+# -----------------------------------------------------------------------------
+
+@dataclass
 class XiUpdate:
     """
     Ξ : Ψ → Ψ
     Enforces: Ξ(ψ) = ψᴽ ⊕ Γ(ψ) via typed Fusion artifact.
     """
-    name = "Ξ"
+    name: str = "Ξ"
+    projector: Projector = None  # type: ignore[assignment]
+    gradient: GradientComputer = None  # type: ignore[assignment]
 
-    def __init__(self, projector: ReflexiveProjection, gradient: SemanticGradient) -> None:
-        self.projector = projector
-        self.gradient = gradient
+    def __post_init__(self) -> None:
+        if self.projector is None:
+            self.projector = ReflexiveProjection()
+        if self.gradient is None:
+            self.gradient = SemanticGradient()
 
     def apply(self, psi: Psi, ctx: Context, mem: Memory) -> Psi:
-        psi_w = self.projector.project(psi, ctx, mem)
-        gamma = self.gradient.compute(psi, ctx, mem)
+        psi_w = self.projector.apply(psi, ctx, mem)
+        gamma = self.gradient.apply(psi, ctx, mem)
 
         fusion = Fusion(psi_reflexive=psi_w, gamma=gamma)
         enforce_non_arithmetic_fusion(fusion)
@@ -82,13 +120,18 @@ class XiUpdate:
         return psi_next
 
 
+# -----------------------------------------------------------------------------
+# Λψ — Collapse / Projection (non-smooth, logged)
+# -----------------------------------------------------------------------------
+
+@dataclass
 class Collapse:
     """
     Λψ : Ψ → Ψ
     Non-smooth projection event, threshold-gated.
     Must emit an explicit collapse artifact if triggered.
     """
-    name = "Λψ"
+    name: str = "Λψ"
 
     def apply(self, psi: Psi, ctx: Context, mem: Memory) -> Psi:
         threshold = float(ctx.limits.get("collapse_threshold", 1.0))
@@ -109,7 +152,7 @@ class Collapse:
             }
         )
 
-        # Non-smooth projection: mark discrete commitment (minimal)
+        # Non-smooth projection marker (minimal)
         next_data = dict(psi.data)
         next_data["_collapsed"] = True
 
