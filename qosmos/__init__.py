@@ -1,11 +1,34 @@
-# pyproject.toml
-[project]
-name = "qosmos-kernel"
-version = "0.1.0"
-description = "Minimal contract-enforced QOSMOS runtime implementing Glyphogenic Calculus."
-readme = "README.md"
-requires-python = ">=3.10"
-license = { text = "MIT" }
+# qosmos/__init__.py
+from .errors import (
+    QOSMOSError,
+    ContractViolation,
+    UndefinedOperator,
+    CollapseError,
+)
 
-[tool.setuptools.packages.find]
-include = ["qosmos*"]
+from .types import (
+    Psi,
+    Context,
+    PsiReflexive,
+    Gamma,
+    Fusion,
+)
+
+from .memory import Memory
+from .runtime import Runtime
+from .telemetry import psi_meta
+
+__all__ = [
+    "QOSMOSError",
+    "ContractViolation",
+    "UndefinedOperator",
+    "CollapseError",
+    "Psi",
+    "Context",
+    "PsiReflexive",
+    "Gamma",
+    "Fusion",
+    "Memory",
+    "Runtime",
+    "psi_meta",
+]
