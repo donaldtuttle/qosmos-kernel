@@ -1,30 +1,62 @@
-# QOSMOS
-Qosmos is an open project for learning through small simulations. It includes AI helpers for setup and analysis, plus examples and tests so results are easy to repeat.
-# Qosmos
+4. README.md 
 
-Plain-language, open-source simulations with a little AI help.
-Qosmos makes it easy to run small physics-style experiments, see what
-happens, and share repeatable results—complete with examples, docs,
-and automatic tests.
+# QOSMOS Kernel
 
-## Features
-- Simple simulations you can read and tweak
-- AI helpers for setup notes and result summaries
-- Clear docs and examples to learn by doing
-- Built-in tests and CI so results are easy to repeat
+**QOSMOS Kernel** is a minimal, contract-enforced runtime implementing the
+Glyphogenic Calculus defined in **Quantum Observer Field Theory (QOFT) & QOSMOS v1**.
 
-## Quick start
-    pip install -e ".[dev]"
-    python scripts/extract_knowledge.py
-    pytest -q
+This repository provides a *kernel*, not a cognitive system.
 
-## Project layout
-- `src/qosmos/` — library code  
-- `docs/` — short guides and examples  
-- `assets/` — zipped knowledge packs (tracked with Git LFS)  
-- `knowledge/` — auto-extracted data for local use  
-- `tests/` — quick checks to keep things honest  
+---
 
-## Notes
-- Everything here is for learning and exploration.  
-- No claims about real-world effects—these are simulations.
+## Core Invariant (Enforced)
+
+Ξ(ψ) = ψᴽ ⊕ Γ(ψ)
+
+- ⊕ is **typed fusion**, not arithmetic
+- ψᴽ is a reflexive self-projection
+- Γ(ψ) is a coherence-gated semantic gradient
+- Violations raise runtime errors
+
+---
+
+## What This Repo Is
+
+- A **reference runtime** for QOSMOS Engine v1
+- A **contract checker** for observer-state updates
+- An **audit-first**, falsifiable execution kernel
+- A clean base for research, testing, and extension
+
+---
+
+## What This Repo Is Not
+
+- Not a model of consciousness
+- Not an AI system
+- Not a neural simulation
+- Not speculative philosophy
+
+---
+
+## Implemented Operators (v0.1)
+
+- Πᴽ — Reflexive Projection
+- Γ — Semantic Gradient
+- Ξ — Recursive Update (contract-enforced)
+- Λψ — Collapse / Projection (non-smooth, logged)
+
+---
+
+## Design Guarantees
+
+- Typed operators only
+- No implicit arithmetic fusion
+- Collapse events are explicit artifacts
+- Memory is append-only
+- Undefined operators fail fast
+
+---
+
+## License
+
+MIT. Use it, fork it, test it, break it.
