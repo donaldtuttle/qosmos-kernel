@@ -1,17 +1,28 @@
+# Python bytecode
 __pycache__/
 *.py[cod]
+
+# Virtual environments
 .venv/
-.env
-dist/
+venv/
+env/
+
+# Packaging / build artifacts
 build/
-site/
+dist/
 *.egg-info/
 
-# Project data
-knowledge/
-*.npz
-*.npz.zip
+# Test / coverage artifacts
+.coverage
+htmlcov/
 
-# Notebooks & cache
-.ipynb_checkpoints/
-*.pytest_cache/
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
