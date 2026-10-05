@@ -9,6 +9,26 @@ This repository provides a *kernel*, not a cognitive system.
 
 ---
 
+## What is this?
+
+A small Python runtime for experimenting with explicit state-update operators,
+contract checks, trace artifacts, and events.
+
+## Why care?
+
+When several steps update the same state, it can be hard to see which operation
+ran and what it left behind. This kernel makes those stages inspectable in a
+minimal example before they are embedded in a larger experiment.
+
+## Try this
+
+Read [examples/minimal_run.py](examples/minimal_run.py). Follow its initial
+state through the registered update and collapse operations, then inspect the
+telemetry, final state, last trace artifact, and events it prints.
+This illustrates the runtime's implementation choices; it does not establish
+a cognitive system or a validated physical model.
+
+
 ## Core Invariant (Enforced)
 
 Ξ(ψ) = ψᴽ ⊕ Γ(ψ)
